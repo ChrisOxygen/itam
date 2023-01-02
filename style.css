@@ -162,3 +162,9 @@ body {
 .itam-today{
   color: #0249F8;
 }
+
+@media only screen and (max-width: 600px) {
+  .itam-today{
+    font-size: 16px;
+  }
+}

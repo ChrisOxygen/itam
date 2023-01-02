@@ -327,15 +327,48 @@ const loadPage = function(calenderCount, year, month){
   }
 }
 
+const todayMarketDayChecker = function(yearItamMarketDays){
+
+  const newYearItamMarketDays = [...yearItamMarketDays]
+  const options = {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    weekday: 'long',
+  };
+
+  const todayDetails = {
+    thisYear : new Date().getFullYear(),
+    month : new Date().getMonth(),
+    date : new Date().getDate(),
+    day : [new Date().getDay(), weekDays[new Date().getDay()]],
+    getNxtItamDay(){
+      for(const[month, day] of newYearItamMarketDays){
+        if(months[todayDetails.month] === month){
+          if(day.includes(todayDetails.date)){
+            itamDayUI.textContent = 'Today is ITAM Market Day'
+          }else{
+            this.nextITAMDay = day.find(date => date > todayDetails.date)
+            const nxtITAMDayOBJ =new Date(todayDetails.thisYear,todayDetails.month,todayDetails.nextITAMDay)
+            itamDayUI.textContent = `Next ITAM Market day is: ${new Intl.DateTimeFormat(navigator.language, options).format(nxtITAMDayOBJ)}`
+          }
+          
+        }
+      }
+    }
+  }
+
+  todayDetails.getNxtItamDay()
+
+  
+
+  console.log(newYearItamMarketDays);
+
+  return todayDetails
+}
+
+todayMarketDayChecker(generateItamDaysForTheYear())
+
 
 
 loadPage(3,...fullMonthAndYear())
-
-
-
-
-
-
-
-
-console.log(generateItamDaysForTheYear());
