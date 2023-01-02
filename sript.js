@@ -5,6 +5,8 @@ const currentMonthUI = document.querySelector('.current_month')
 const currentDayDateUI = document.querySelector('.todays-date--date')
 const monthDaysUI = document.querySelector('.month-days')
 const mainContainer = document.querySelector('.main-container')
+const itamDayUI = document.querySelector('.itam-today')
+
 
 const months = [
   "January",
@@ -242,8 +244,10 @@ const purpulateDaysOfMonth = function(monthData){
       if(month === months[monthData.currentMonth]){
         if(checkForToday && itamDays.includes(day[0])){
           monthDaysHTML +=`<div class="day-date today-and-itam-day">${day[0]}</div>` 
+          // itamDayUI.textContent = 'Today is ITAM Market Day'
         }else  if(itamDays.includes(day[0])){
           monthDaysHTML +=`<div class="day-date itam-day">${day[0]}</div>` 
+          // itamDayUI.textContent = `Today is Not ITAM Market Day`
         }else if(checkForToday){
           monthDaysHTML +=`<div class="day-date today">${day[0]}</div>` 
         }else {
