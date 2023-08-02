@@ -1,219 +1,366 @@
 
 'use strict'
 
-//UI elements
-
-const itamMarketDayIndicatorUI = document.querySelector('.itam-market-day-indicator')
-const calenderContainerUI = document.querySelector('.calender-container')
-
-const weekDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-
-const monthOfAYear = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 
 
 
-const generateItamDaysForTheYear = function(year = new Date().getFullYear(), FirstItamDay = 2){
+class App {
 
-    const itamDaysForTheYear = [
-      ["January", []],
-      ["February", []],
-      ["March", []],
-      ["April", []],
-      ["May", []],
-      ["June", []],
-      ["July", []],
-      ["August", []],
-      ["September", []],
-      ["October", []],
-      ["November", []],
-      ["December", []],
-    ]
+
+
+  //UI elements
+
+  calenderContainerUI = document.querySelector('.calender-container')
+
+  itamMarketDayIndicatorUI = document.querySelector('.itam-market-day-indicator')
+  
+
+
+  //------------------------------------------------------------------------
+
+
+  constructor(year = new Date().getFullYear()){
 
     
-  
-  
+
+    this.currentYear = year
+
+    this.allItamMarketDayNumbers = this.getAllItamDaysForTheYear(this.currentYear)
+
+    this.allDaysInCurrentYear = this.getAllDaysInCurrentYear(this.currentYear)
+
+    this.AllMonthsInCurrentYear = this.getAllMonthsInCurrentYear()
+
+    this.allItamMarketDayOBJs = this.getallItamMarketDayOBJs(this.allDaysInCurrentYear)
+
+    this.init()
+
+  }
+
+  init(){
+
+    this.calenderContainerUI.innerHTML = ''
+    this.calenderContainerUI.innerHTML = this.renderMonthDates(this.AllMonthsInCurrentYear)
+    this.ItamMarketDayChecker()
     
-  
-    let generatedDate = new Date(year, 0,FirstItamDay)
-  
-    for (let day = 1; day <= 365; day++){
-  
-      
-      if(day === FirstItamDay){
-  
-        if(weekDays[generatedDate.getDay()] === 'Sunday'){
-          
-          FirstItamDay += 1
-  
-          generatedDate = new Date(year, 0,FirstItamDay)
-  
-          for (let month = 0; month < 12; month++){
-  
-            if(monthOfAYear[generatedDate.getMonth()] === itamDaysForTheYear[month][0]){
-              
-              itamDaysForTheYear[month][1].push(generatedDate.getDate())
-              
-            }
-            
-          }
-  
-          FirstItamDay -= 1
-          generatedDate = new Date(year, 0,FirstItamDay)
-  
-        }else{
-  
-        
-          for (let month = 0; month < 12; month++){
-  
-            if(monthOfAYear [generatedDate.getMonth()] === itamDaysForTheYear[month][0]){
-  
-              itamDaysForTheYear[month][1].push(generatedDate.getDate())
-            
-            }
-  
-          }
-  
-        }
-  
-        FirstItamDay += 8
-        generatedDate = new Date(year, 0,FirstItamDay)
-  
-      }
-    
-    }
-  
-  
-    return itamDaysForTheYear
-}
+  }
 
-const createCalender = function(thisYear = new Date(),itamDaysForTheYear = generateItamDaysForTheYear()){
+  getallItamMarketDayOBJs(allDaysOfYear){
 
-    const calender = {
-        year : thisYear.getFullYear(),
-        months : [],
-        today: [weekDays[new Date().getDay()], thisYear.getDate(), [thisYear.getMonth(),monthOfAYear[thisYear.getMonth()]], thisYear.getFullYear()]
+    const itamDays = []
 
-
-    }
-
-    monthOfAYear.forEach(function(month, monthIndex){
-
-        let days = []
-    
-        for (let date = 1; date <= new Date(thisYear.getFullYear(), monthIndex + 1, 0).getDate(); date++){
-            
-            days.push([date, weekDays[new Date(thisYear.getFullYear(), monthIndex,date).getDay()]])
-        }
-
-        calender.months.push({index: monthIndex, title:month, totalMonthDays: new Date(thisYear.getFullYear(), monthIndex + 1, 0).getDate(), days: days, itamDays: itamDaysForTheYear.find(monthArray => monthArray[0] === month)[1]})
+    allDaysOfYear.forEach(function(day){
+      if(day.isItamDay === true) itamDays.push(day)
     })
 
-    return calender
+    return itamDays
 
-    
-    
-    
+  }
 
-            
-    
-            
+  ItamMarketDayChecker(){
 
-    
-
-    
-
-}
-
-
-
-console.log(createCalender());
-
-createCalender()
-
-const loadCalender = function(calender){
-
-  calenderContainerUI.innerHTML = ''
-  let html = ''
-  calender.months.forEach(function(monthOBJ){
-    let monthDays = ''
-
-    if(monthOBJ.days[0][1] !== 'Sunday'){
-      monthDays += `<div class="calender-days--day-container"><span class="day"> </span></div>`.repeat(weekDays.indexOf(monthOBJ.days[0][1])) 
-    }
-
-    for(const day of monthOBJ.days){
-
-      
-
-      const isToday = calender.today[0] === day[1] && calender.today[1] === day[0] && calender.today[2][1] === monthOBJ.title
-      
-      if(monthOBJ.itamDays.includes(day[0]) && isToday ){
-        monthDays += `<div class="calender-days--day-container today-day-container itam-day-container"><span class="day">${day[0]}</span></div>`
-      }else if(monthOBJ.itamDays.includes(day[0]) ){
-        monthDays += `<div class="calender-days--day-container itam-day-container"><span class="day">${day[0]}</span></div>`
-      }else if(isToday ){
-        monthDays += `<div class="calender-days--day-container today-day-container"><span class="day">${day[0]}</span></div>`
+    const datify = function(str){
+      if(str[-1] === '1'){
+        str += 'st'
+      }else if(str[-1] === '2'){
+        str += 'nd'
+      }else if(str[-1] === '3'){
+        str += 'rd'
       }else{
-        
-        monthDays += `<div class="calender-days--day-container"><span class="day">${day[0]}</span></div>`
+        str += 'th'
       }
 
-    } 
-
-
-    const currentMonth = `
-    <div class="calender">
-    <h3 class="calender-month-title">${monthOBJ.title}</h3>
-    <div class="week-days">
-        <span class="week-days--day">Su</span>
-        <span class="week-days--day">Mo</span>
-        <span class="week-days--day">Tu</span>
-        <span class="week-days--day">We</span>
-        <span class="week-days--day">Th</span>
-        <span class="week-days--day">Fr</span>
-        <span class="week-days--day">Sa</span>
-    </div>
-    <div class="calender-days">
-        ${monthDays}  
-    </div>
-    </div>
+      return str
+    }
     
-    `
-    html += currentMonth;
 
-  })
+    let isMarketDay
+    
+    this.allItamMarketDayOBJs.forEach(function(day){
+      
 
-  calenderContainerUI.innerHTML = html
+      if(day.isToday === true){
+        
+        isMarketDay = true
 
-  const allItamMarketDays = []
+      }else{
 
-  calender.months.forEach(month => allItamMarketDays.push([month.title, month.itamDays]))
+        isMarketDay = false
+  
+      }
+    })
 
+    if(!isMarketDay){
+      
+      this.itamMarketDayIndicatorUI.style.color = 'black'
 
-  const TodayIsItamDay = calender.months.find(month => month.title === calender.today[2][1]).itamDays.includes(calender.today[1])
-  let nextItamDay = new Date()
+      const todayIndex = this.allDaysInCurrentYear.findIndex(function(day){
+        return new Date().getMonth() === day.monthIndex  && new Date().getDate() === day.date
+      })
 
-  if(calender.today[1] >= calender.months.find(month => month.title === calender.today[2][1]).itamDays[-1]){
-    const nxtMontOBJ = calender.months.find(month => month.index === calender.months.find(month => month.title === calender.today[2][1]) + 1)
-    nextItamDay = new Date(calender.year,nxtMontOBJ.index,nxtMontOBJ.itamDays[0])
-  }else{
-    nextItamDay = new Date(calender.year,calender.months.find(month => month.title === calender.today[2][1]).index,calender.months.find(month => month.title === calender.today[2][1]).itamDays.find(day => day > calender.today[1]))
+      const nextItamDay = this.allDaysInCurrentYear.find(function(day, index){
+        return index > todayIndex  && day.isItamDay
+      })
+
+      this.itamMarketDayIndicatorUI.textContent = `Next Itam day is ${nextItamDay.day }, ${datify(''+nextItamDay.date) } ${nextItamDay.month }`
+      
+    }else{
+      
+      this.itamMarketDayIndicatorUI.textContent = 'Today is ITAM Market'
+
+      this.itamMarketDayIndicatorUI.style.color = 'red'
+    }
+
+    
+
+    
+
+    
+
   }
 
 
+
+  renderMonthDates(monthInYear){
+
+    
+
+    let yearCalHTML = ``
+
+    const addDaysBeforeCurrentMonth = function(month){
+
+      let html =''
+
+      const firstDayIndex = month.daysOfThisMonth[0].dayIndex
+      let date = month.lastDateInLastMonth
+
+      date -= firstDayIndex
+
+      for (let i = 0; i < firstDayIndex; i++) {
+
+        html += `<div class="calender-days--day-container other-month-days"><span class="day">${date + 1}</span></div>`
+        date++
+        
+      }
+
+      return html
+
+    }
+
+    const getDaysOfThisMonthUI = function(month){
+
+      let html = ''
+
+      month.daysOfThisMonth.forEach(function(day){
+
+        if(day.isToday === true){
+
+          if(day.isItamDay === true){
+
+            html += `<div class="calender-days--day-container itam-day-container today-day-container"><span class="day">${day.date}</span></div>`
   
-  const options = {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    weekday: 'long',
-  };
+          }else{
+            html += `<div class="calender-days--day-container today-day-container"><span class="day">${day.date}</span></div>`
+          }
 
-  TodayIsItamDay ? itamMarketDayIndicatorUI.textContent = `Today is ITAM Market Day !!!` : itamMarketDayIndicatorUI.textContent = `Next Market day is: ${new Intl.DateTimeFormat(navigator.language, options).format(nextItamDay)}`
+        }else{
+
+          if(day.isItamDay === true){
+
+            html += `<div class="calender-days--day-container itam-day-container"><span class="day">${day.date}</span></div>`
+  
+          }else{
+            html += `<div class="calender-days--day-container"><span class="day">${day.date}</span></div>`
+          }
+        }
+        
+      
+      })
+
+      return html
+    }
+
+    const addremainingDays = function(month){
+
+      let html =''
+
+      const firstDayIndex = month.daysOfThisMonth[0].dayIndex
+
+      const remainingPagesCount = 42 - (firstDayIndex + month.daysOfThisMonth.length)
+      
+      let dayNum = 1
+
+      for (let i = 0; i < remainingPagesCount; i++) {
+
+        
+        
+        html += `<div class="calender-days--day-container other-month-days"><span class="day">${dayNum}</span></div>`
+        dayNum++
+        
+      }
+
+      return html
+
+    }
+
+    monthInYear.forEach(function(month){
+
+      let singleCalHTML = ``
+
+      let monthsDayHTML = ``
+
+      monthsDayHTML += addDaysBeforeCurrentMonth(month)
+
+      monthsDayHTML += getDaysOfThisMonthUI(month)
+
+      monthsDayHTML += addremainingDays(month)
+      
 
 
 
+      singleCalHTML += `
+      <div class="calender">
+        <h3 class="calender-month-title">${month.monthTitle}</h3>
+        <div class="week-days">
+          <span class="week-days--day">Su</span>
+          <span class="week-days--day">Mo</span>
+          <span class="week-days--day">Tu</span>
+          <span class="week-days--day">We</span>
+          <span class="week-days--day">Th</span>
+          <span class="week-days--day">Fr</span>
+          <span class="week-days--day">Sa</span>
+        </div>
+        <div class="calender-days">
+          ${monthsDayHTML}
+        </div>
+      </div>
+      
+      `
+      yearCalHTML += singleCalHTML
+
+      
+
+
+
+    })
+
+    return yearCalHTML
+
+
+  }
+
+  
+  getAllItamDaysForTheYear(year, firstItamDay = 2){
+
+    const allItamDaysForTheYear = []
+    let currItamDay = firstItamDay
+    while (currItamDay < 365) {
+
+      if(new Date(year, 0,currItamDay).getDay() === 0){
+        allItamDaysForTheYear.push(currItamDay + 1)
+      }else{
+        allItamDaysForTheYear.push(currItamDay)
+      }
+
+      
+      currItamDay += 8
+    }
+
+    if(allItamDaysForTheYear[-1] > 365) allItamDaysForTheYear.pop()
+
+    return allItamDaysForTheYear
+  }
+
+
+  getAllDaysInCurrentYear(year){
+
+    const days = []
+    
+    let runningDayNumber = 1
+
+    while (runningDayNumber <= 365) {
+      if(this.allItamMarketDayNumbers.includes(runningDayNumber)){
+        days.push(new Day(runningDayNumber, true))
+      }else{
+        days.push(new Day(runningDayNumber, false))
+      }
+
+      runningDayNumber ++
+      
+    }
+
+    return days
+  }
+
+  getAllMonthsInCurrentYear(){
+
+    const monthOfAYear = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+    
+
+    const thisBinderMap = function(month){
+      const dayOM = []
+
+      this.allDaysInCurrentYear.forEach(function(day){
+        if(day.month === month) dayOM.push(day)
+
+      })
+
+      dayOM.sort(function(a,b){
+        return a.date - b.date
+      })
+      
+      
+
+
+      return {
+        monthTitle : month,
+        daysOfThisMonth : dayOM
+      }
+    }
+
+    const placeHolderArr = monthOfAYear.map(thisBinderMap.bind(this))
+
+    return placeHolderArr.map(function(month, index, currArr){
+
+      return {
+        monthTitle : month.monthTitle,
+
+        daysOfThisMonth : month.daysOfThisMonth,
+
+        lastDateInLastMonth : month.monthTitle === 'January' ? 31 : currArr[index - 1].daysOfThisMonth.length
+      }
+    })
+  }
+
+  
+  
+
+  
 }
 
-loadCalender(createCalender())
+
+class Day {
+  
+  isWeekend = false;
+  constructor(dayNumber, isItamDay){
+
+    const weekDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    const monthOfAYear = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+
+    this.monthIndex = new Date(2023, 0,dayNumber).getMonth()
+    this. date = new Date(2023, 0,dayNumber).getDate()
+    this.dayIndex = new Date(2023, 0,dayNumber).getDay()
+    this.day = weekDays[new Date(2023, 0,dayNumber).getDay()]
+    this.month = monthOfAYear[this.monthIndex]
+    this.isItamDay = isItamDay
+
+    if(this.day === 'Saturday' || this.day === 'Sunday') this.isWeekend = true
+
+    this.isToday = true ? new Date().getMonth() === this.monthIndex  && new Date().getDate() === this.date : false
+
+  }
+}
+
+const cal =  new App()
+
 

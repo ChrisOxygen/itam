@@ -108,6 +108,10 @@ body{
     position: relative;
 }
 
+.other-month-days{
+    opacity: 0.2;
+}
+
 .today-day-container{
     
     position: relative;
