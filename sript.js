@@ -387,8 +387,6 @@ class Day {
 
 const cal =  new App()
 
-console.log(screen.width);
-
 
 
 
