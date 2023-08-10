@@ -99,6 +99,8 @@ class App {
       this.itamMarketDayIndicatorUI.textContent = 'Today is ITAM Market'
 
       this.itamMarketDayIndicatorUI.style.color = 'red'
+
+      this.itamMarketDayIndicatorUI.classList.add('animator')
     }
 
     
