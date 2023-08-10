@@ -16,33 +16,45 @@ body{
     
     background-color: #F3F8FE;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
 
     color: rgb(24, 24, 24);
 }
 
-.main-container{
-
-    width: 1200px;
-    min-height: 100vh;
-    padding: 40px 20px;
+.header-section{
+    border-bottom: rgba(194, 194, 194, 0.383) solid 1px;
+    width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 30px;
+    align-items: center;
+    justify-content: center;
+
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: rgba(255, 255, 255, 0.254);
+    backdrop-filter: blur(5px);
+
+    z-index: 100;
+    box-shadow: 2px 2px 15px 0px rgba(0,0,0,0.05);
+
+    
 }
 
-.header-section{
-    padding: 10px 0;
-    border-top: rgb(194, 194, 194) solid 1px;
-    border-bottom: rgb(194, 194, 194) solid 1px;
+.header-section-container{
     display: flex;
     justify-content: space-between;
+
+    width: 100%;
+    max-width: 1200px;
+    padding: 40px 20px;
 }
 
 .app-title{
     font-size: 20px;
-    color: rgb(205, 205, 205);
+    color: rgb(145, 145, 145);
     margin-right: 30px;
 }
 
@@ -51,11 +63,24 @@ body{
     color: rgb(90, 90, 90);
 }
 
+.main-container{
+
+    max-width: 1200px;
+    min-height: 100vh;
+    padding: 40px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+
+
 .calender-container{
     display: flex;
     gap: 20px;
     flex-wrap: wrap;
     justify-content: center;
+    margin-top: 100px;
 }
 
 .calender{
@@ -145,7 +170,7 @@ body{
 }
 
 @media only screen and (max-width: 822px) {
-    .header-section{
+    .header-section-container{
         flex-direction: column;
         align-items: center;
     }

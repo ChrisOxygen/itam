@@ -42,6 +42,8 @@ class App {
     this.calenderContainerUI.innerHTML = ''
     this.calenderContainerUI.innerHTML = this.renderMonthDates(this.AllMonthsInCurrentYear)
     this.ItamMarketDayChecker()
+
+    this.scrollToCurrentMonth()
     
   }
 
@@ -74,23 +76,11 @@ class App {
     }
     
 
-    let isMarketDay
-    
-    this.allItamMarketDayOBJs.forEach(function(day){
-      
+    const isMarketDay = this.allItamMarketDayOBJs.some(day => day.isToday === true)
 
-      if(day.isToday === true){
-        
-        isMarketDay = true
-
-      }else{
-
-        isMarketDay = false
-  
-      }
-    })
 
     if(!isMarketDay){
+      
       
       this.itamMarketDayIndicatorUI.style.color = 'black'
 
@@ -219,8 +209,8 @@ class App {
 
 
       singleCalHTML += `
-      <div class="calender">
-        <h3 class="calender-month-title">${month.monthTitle}</h3>
+      <div class="calender " id ="${month.monthTitle}">
+        <h3 class="calender-month-title" >${month.monthTitle}</h3>
         <div class="week-days">
           <span class="week-days--day">Su</span>
           <span class="week-days--day">Mo</span>
@@ -332,6 +322,40 @@ class App {
     })
   }
 
+  scrollToCurrentMonth(){
+    const today = this.allDaysInCurrentYear.find(function(day){
+      if(day.isToday === true) return day
+    })
+
+    const thisMonth = today.month
+
+    let options = {
+      root: null,
+      threshold: 1,
+    };
+    
+    const alerter = function(entries, observer){
+    
+      const [entry] = entries
+
+      if(entry.isIntersecting === false){
+        
+
+        document.querySelector(`#${thisMonth}`).scrollIntoView({ behavior: 'smooth', block:'center' });
+
+      }
+    
+      // console.log(entry);
+    }
+    
+    let observer = new IntersectionObserver(alerter, options);
+    
+    let target = document.querySelector(`#${thisMonth}`);
+    observer.observe(target);
+    
+    
+  }
+
   
   
 
@@ -362,5 +386,9 @@ class Day {
 }
 
 const cal =  new App()
+
+console.log(screen.width);
+
+
 
 
